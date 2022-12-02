@@ -1,4 +1,4 @@
-package prodcons.v1;
+package prodcons.v2;
 
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
@@ -39,9 +39,7 @@ public class TestProdCons {
 			listProd[i].join();
 		}
 		
-		for (int i = 0; i < nCons ; i++) {
-			listCons[i].join();
-		}
+		while(prodConsBuff.nmsg() != 0) {}
 		
 	}
 }
