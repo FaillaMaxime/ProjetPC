@@ -10,6 +10,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int head; 
 	int tail; 
 	int totMsg ; 
+	boolean end;
 	
 	public ProdConsBuffer(int nbMaxMsg) {
 		listeMsg = new Message[nbMaxMsg];
@@ -34,9 +35,11 @@ public class ProdConsBuffer implements IProdConsBuffer{
 
 	@Override
 	public synchronized Message get() throws InterruptedException {
-		while (head == tail && nbMsg == 0) {
+		while (head == tail && nbMsg == 0 && !end) {
 			wait(); 
 		}
+		if (end)
+			return null;
 		Message m = listeMsg[tail]; 
 		if (tail == listeMsg.length-1) {
 			tail = 0;
@@ -56,6 +59,11 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	@Override
 	public int totmsg() {
 		return totMsg;
+	}
+	
+	public synchronized void prodEnded() {
+		end = true;
+		notifyAll();
 	}
 
 }
