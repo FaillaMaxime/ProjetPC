@@ -21,6 +21,7 @@ public class Producer extends Thread{
 		while(nbProd > 0) {
 			try {
 				pcb.put(new Message(nbProd));
+				System.out.println("tien à manger");
 				sleep(timeProd);
 				nbProd -- ; 
 			} catch (InterruptedException e) {}

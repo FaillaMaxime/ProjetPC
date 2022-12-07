@@ -25,21 +25,27 @@ public class TestProdCons {
 		
 		Random rand = new Random(); 
 		
-		for (int i = 0; i < nCons ; i++) {
-			listCons[i] = new Consumer(consTime, prodConsBuff) ; 
-		}
+		int messageToConsume = 0; 
 		
 		for (int i = 0; i < nProd ; i++) {
-			int alea = rand.nextInt(maxProd - minProd + 1) + minProd ; 
+			int alea = rand.nextInt(maxProd - minProd + 1) + minProd ;
+			messageToConsume += alea ; 
 			listProd[i] = new Producer(prodTime ,alea, prodConsBuff) ; 
 		}
 		
-		
+		for (int i = 0; i < nCons ; i++) {
+			listCons[i] = new Consumer(consTime, prodConsBuff) ; 
+		}
+
 		for (int i = 0; i < nProd ; i++) {
 			listProd[i].join();
 		}
 		
-		while(prodConsBuff.nmsg() != 0) {}
+		Consumer.produceFin() ; 
+		
+		for (int i = 0; i < nCons ; i++) {
+			listCons[i].join();
+		}
 		
 	}
 }

@@ -6,6 +6,7 @@ public class Consumer extends Thread{
 	
 	int consTime;
 	ProdConsBuffer pcb; 
+	static boolean prdFin= false ; 
 	
 	public Consumer(int consT ,ProdConsBuffer prodConsBuff) {
 		consTime = consT ; 
@@ -15,12 +16,17 @@ public class Consumer extends Thread{
 	
 	@Override
 	public void run() {
-		while (true) {
+		while (!prdFin || (pcb.nmsg() != 0)) {
 			try {
 				Message m = pcb.get();
 				sleep(consTime); 
+				System.out.println("miam");
 			} catch (InterruptedException e) {} 
 		}
+	}
+	
+	static void produceFin () {
+		prdFin = true ; 
 	}
 
 }
