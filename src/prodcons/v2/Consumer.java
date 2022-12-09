@@ -19,8 +19,7 @@ public class Consumer extends Thread{
 		while (!prdFin || (pcb.nmsg() != 0)) {
 			try {
 				Message m = pcb.get();
-				sleep(consTime); 
-				System.out.println("miam");
+				sleep(consTime);
 			} catch (InterruptedException e) {} 
 		}
 	}

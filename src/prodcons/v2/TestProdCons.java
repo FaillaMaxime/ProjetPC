@@ -42,6 +42,7 @@ public class TestProdCons {
 		}
 		
 		Consumer.produceFin() ; 
+		prodConsBuff.prodEnded();
 		
 		for (int i = 0; i < nCons ; i++) {
 			listCons[i].join();
