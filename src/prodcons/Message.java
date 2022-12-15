@@ -6,4 +6,12 @@ public class Message {
 	public Message(int i) {
 		val = i;
 	}
+	
+	public int getval() {
+		return val ; 
+	}
+	
+	public void setval(int i) {
+		val =i ; 
+	}
 }

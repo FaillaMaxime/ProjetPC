@@ -1,14 +1,14 @@
-package prodcons.v2;
+package prodcons.v6;
 
 import prodcons.Message;
 
-public class Producer extends Thread{
+public class ProducerV2 extends Thread{
 	
 	int nbProd ; 
 	int timeProd; 
 	ProdConsBuffer pcb ; 
 	
-	public Producer(int prodTime, int nbP , ProdConsBuffer prodConsBuff) {
+	public ProducerV2(int prodTime, int nbP , ProdConsBuffer prodConsBuff) {
 		timeProd = prodTime ; 
 		nbProd = nbP ; 
 		pcb = prodConsBuff ; 
@@ -20,7 +20,7 @@ public class Producer extends Thread{
 	public void run() {
 		while(nbProd > 0) {
 			try {
-				pcb.put(new Message(nbProd));
+				pcb.put(new Message(nbProd), 6);
 				sleep(timeProd);
 				nbProd -- ; 
 			} catch (InterruptedException e) {}

@@ -1,4 +1,4 @@
-package prodcons.v2;
+package prodcons.v5;
 
 import prodcons.Message;
 
@@ -6,7 +6,6 @@ public class Consumer extends Thread{
 	
 	int consTime;
 	ProdConsBuffer pcb; 
-	static boolean prdFin= false ; 
 	
 	public Consumer(int consT ,ProdConsBuffer prodConsBuff) {
 		consTime = consT ; 
@@ -16,16 +15,12 @@ public class Consumer extends Thread{
 	
 	@Override
 	public void run() {
-		while (!prdFin || pcb.nmsg() != 0) {
+		while (true) {
 			try {
 				Message m = pcb.get();
-				sleep(consTime);
+				sleep(consTime); 
 			} catch (InterruptedException e) {} 
 		}
-	}
-	
-	static void produceFin () {
-		prdFin = true ; 
 	}
 
 }

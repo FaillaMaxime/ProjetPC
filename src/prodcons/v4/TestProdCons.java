@@ -1,4 +1,4 @@
-package prodcons.v1;
+package prodcons.v4;
 
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
@@ -8,8 +8,8 @@ import java.util.Random;
 public class TestProdCons {
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException {
 		
-		Properties props = new Properties();
-		props.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("option.xml"));
+		Properties props = new Properties(); 
+		props.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("option.xml"));	
 		int nProd = Integer.parseInt(props.getProperty("nProd"));
 		int nCons = Integer.parseInt(props.getProperty("nCons"));
 		int buffSize = Integer.parseInt(props.getProperty("bufSz"));
@@ -38,7 +38,6 @@ public class TestProdCons {
 		for (int i = 0; i < nProd ; i++) {
 			listProd[i].join();
 		}
-		
 		System.out.println("il n'y as plus de production possible, mais le programme continue car les consomateurs ne sont pas arrété");
 		
 		for (int i = 0; i < nCons ; i++) {

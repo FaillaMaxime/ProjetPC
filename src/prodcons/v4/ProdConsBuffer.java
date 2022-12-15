@@ -1,4 +1,8 @@
-package prodcons.v2;
+package prodcons.v4;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import prodcons.IProdConsBuffer;
 import prodcons.Message;
@@ -10,7 +14,10 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int head; 
 	int tail; 
 	int totMsg ; 
-	boolean end;
+
+	Lock lock = new ReentrantLock();
+	Condition waitFull = lock.newCondition(); 
+	Condition waitEmpty = lock.newCondition(); 		   
 	
 	public ProdConsBuffer(int nbMaxMsg) {
 		listeMsg = new Message[nbMaxMsg];
@@ -18,31 +25,37 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	
 
 	@Override
-	public synchronized void put(Message m) throws InterruptedException {
+	public void put(Message m) throws InterruptedException {
+		lock.lock();
+		
 		while (head == tail && nbMsg == listeMsg.length) {
-			wait();
+			waitFull.await();
 		}
 		listeMsg[head] = m ;
-		printMemory() ; 
+		printMemory();
 		head = (head+1)%(listeMsg.length) ;
 		nbMsg ++; 
 		totMsg++;
-		notifyAll() ; 
+		
+		waitEmpty.signal();
+		
+		lock.unlock();
 	}
 
+	
 	@Override
-	public synchronized Message get() throws InterruptedException {
-		while (head == tail && nbMsg == 0 && !end) {
-			wait(); 
+	public Message get() throws InterruptedException {
+		lock.lock();
+		while (head == tail && nbMsg == 0) {
+			waitEmpty.await();
 		}
-		if (end && nbMsg == 0)
-			return null;
 		Message m = listeMsg[tail]; 
-		listeMsg[tail] = null ; 
+		listeMsg[tail] = null; 
 		printMemory();
 		tail = (tail+1)%(listeMsg.length) ;
 		nbMsg -- ; 
-		notifyAll() ; 
+		waitFull.signal();
+		lock.unlock();
 		return m ; 
 	}
 	
@@ -66,11 +79,6 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	@Override
 	public int totmsg() {
 		return totMsg;
-	}
-	
-	public synchronized void prodEnded() {
-		end = true;
-		notifyAll();
 	}
 
 }

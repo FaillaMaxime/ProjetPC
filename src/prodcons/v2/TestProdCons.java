@@ -48,5 +48,7 @@ public class TestProdCons {
 			listCons[i].join();
 		}
 		
+		System.out.println("il n'y as plus de production possible, tout les consomateurs se sont fini, le programme est fini avec succes");
+		
 	}
 }

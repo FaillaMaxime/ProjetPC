@@ -1,4 +1,4 @@
-package v3;
+package prodcons.v3;
 
 import prodcons.Message;
 
@@ -20,7 +20,6 @@ public class Consumer extends Thread{
 			try {
 				Message m = pcb.get();
 				sleep(consTime); 
-				System.out.println("miam");
 			} catch (InterruptedException e) {} 
 		}
 	}

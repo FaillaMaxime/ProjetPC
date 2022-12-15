@@ -1,4 +1,4 @@
-package prodcons.v2;
+package prodcons.v6;
 
 import prodcons.Message;
 

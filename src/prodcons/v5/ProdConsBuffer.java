@@ -1,6 +1,5 @@
-package prodcons.v2;
+package prodcons.v5;
 
-import prodcons.IProdConsBuffer;
 import prodcons.Message;
 
 public class ProdConsBuffer implements IProdConsBuffer{
@@ -10,8 +9,9 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	int head; 
 	int tail; 
 	int totMsg ; 
-	boolean end;
 	
+	boolean lectureRafalleUngoing = false;
+
 	public ProdConsBuffer(int nbMaxMsg) {
 		listeMsg = new Message[nbMaxMsg];
 	}
@@ -23,27 +23,58 @@ public class ProdConsBuffer implements IProdConsBuffer{
 			wait();
 		}
 		listeMsg[head] = m ;
-		printMemory() ; 
+		printMemory();
+		m.setval(totMsg);
 		head = (head+1)%(listeMsg.length) ;
 		nbMsg ++; 
 		totMsg++;
-		notifyAll() ; 
+		notifyAll();
 	}
 
 	@Override
 	public synchronized Message get() throws InterruptedException {
-		while (head == tail && nbMsg == 0 && !end) {
+		while (head == tail && nbMsg == 0 || lectureRafalleUngoing) {
 			wait(); 
 		}
-		if (end && nbMsg == 0)
-			return null;
+
 		Message m = listeMsg[tail]; 
-		listeMsg[tail] = null ; 
+		listeMsg[tail] = null;
 		printMemory();
 		tail = (tail+1)%(listeMsg.length) ;
 		nbMsg -- ; 
 		notifyAll() ; 
 		return m ; 
+	}
+	
+
+	@Override
+	public synchronized Message[] get(int k) throws InterruptedException {
+		while (lectureRafalleUngoing) {
+			wait(); 
+		}
+		lectureRafalleUngoing = true ; 
+		
+		Message[] listM = new Message[k]; 
+		
+		for(int i = 0 ; i < k ; i++) {
+			
+			while (head == tail && nbMsg == 0) {
+				notifyAll();
+				wait();
+			}
+			listM[i] = listeMsg[tail];
+			listeMsg[tail] = null;
+			System.out.print("plus que " + (k-i-1) + " à lire   ");
+			printMemory();
+			tail = (tail+1)%(listeMsg.length) ;
+			nbMsg -- ; 
+			
+		}
+		
+		lectureRafalleUngoing = false ; 
+		notifyAll() ;
+		return listM;  
+		
 	}
 	
 	private void printMemory() {
@@ -67,10 +98,7 @@ public class ProdConsBuffer implements IProdConsBuffer{
 	public int totmsg() {
 		return totMsg;
 	}
-	
-	public synchronized void prodEnded() {
-		end = true;
-		notifyAll();
-	}
+
+
 
 }

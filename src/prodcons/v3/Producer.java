@@ -1,4 +1,4 @@
-package v3;
+package prodcons.v3;
 
 import prodcons.Message;
 
@@ -21,7 +21,6 @@ public class Producer extends Thread{
 		while(nbProd > 0) {
 			try {
 				pcb.put(new Message(nbProd));
-				System.out.println("tien à manger");
 				sleep(timeProd);
 				nbProd -- ; 
 			} catch (InterruptedException e) {}

@@ -1,4 +1,4 @@
-package v3;
+package prodcons.v6;
 
 import java.io.IOException;
 import java.util.InvalidPropertiesFormatException;
@@ -8,8 +8,8 @@ import java.util.Random;
 public class TestProdCons {
 	public static void main(String[] args) throws InvalidPropertiesFormatException, IOException, InterruptedException {
 		
-		Properties props = new Properties(); 
-		props.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("option.xml"));	
+		Properties props = new Properties();
+		props.loadFromXML(TestProdCons.class.getClassLoader().getResourceAsStream("option.xml"));
 		int nProd = Integer.parseInt(props.getProperty("nProd"));
 		int nCons = Integer.parseInt(props.getProperty("nCons"));
 		int buffSize = Integer.parseInt(props.getProperty("bufSz"));
@@ -21,31 +21,35 @@ public class TestProdCons {
 		
 		ProdConsBuffer prodConsBuff = new ProdConsBuffer(buffSize);
 		Consumer[] listCons = new Consumer[nCons];
-		Producer[] listProd = new Producer[nProd];
+		Producer[] listProd = new Producer[3*nProd/4];
+		ProducerV2[] listProdv2 = new ProducerV2[nProd/4];
 		
 		Random rand = new Random(); 
-		
-		int messageToConsume = 0; 
-		
-		for (int i = 0; i < nProd ; i++) {
-			int alea = rand.nextInt(maxProd - minProd + 1) + minProd ;
-			messageToConsume += alea ; 
-			listProd[i] = new Producer(prodTime ,alea, prodConsBuff) ; 
-		}
 		
 		for (int i = 0; i < nCons ; i++) {
 			listCons[i] = new Consumer(consTime, prodConsBuff) ; 
 		}
-
-		for (int i = 0; i < nProd ; i++) {
+		
+		for (int i = 0; i < 3*nProd/4 ; i++) {
+			int alea = rand.nextInt(maxProd - minProd + 1) + minProd ; 
+			listProd[i] = new Producer(prodTime ,alea, prodConsBuff) ; 
+		}
+		
+		for (int i = 0; i < nProd/4 ; i++) {
+			int alea = rand.nextInt(maxProd - minProd + 1) + minProd ; 
+			listProdv2[i] = new ProducerV2(prodTime ,alea, prodConsBuff) ; 
+		}
+		
+		
+		for (int i = 0; i < 3*nProd/4 ; i++) {
 			listProd[i].join();
 		}
 		
-		Consumer.produceFin() ; 
-		
-		for (int i = 0; i < nCons ; i++) {
-			listCons[i].join();
+		for (int i = 0; i < nProd/4 ; i++) {
+			listProdv2[i].join();
 		}
+		
+		System.out.println("il n'y as plus de production possible, mais le programme continue car les consomateurs ne sont pas arrété");
 		
 	}
 }
